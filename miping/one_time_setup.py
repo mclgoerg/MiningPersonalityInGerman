@@ -150,7 +150,17 @@ def main(
                 glove_path=(workingDir + '/data/glove/' + 'glove.db')
             )
             print("Please fill .env with keys and config")
-
+    else:
+        mipingDir = os.path.dirname(os.path.abspath(__file__))
+        workingDir = os.getcwd()
+        exists = os.path.isfile(workingDir + '/.env')
+        if not exists:
+            modify_env(
+                mipingDir=mipingDir,
+                workingDir=workingDir,
+                glove_path=(workingDir + '/data/glove/' + 'glove.db')
+            )
+            print("Please fill .env with keys and config")
 
 def modify_env(
     mipingDir,
@@ -239,6 +249,7 @@ def determine_if_webserver(
                 print("No config file for domain " + str(domain))
     else:
         print('Will not setup webserver')
+        webserver = False
 
     return webserver
 

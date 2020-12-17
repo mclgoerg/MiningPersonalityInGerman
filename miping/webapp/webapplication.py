@@ -4,6 +4,9 @@ from flask import jsonify
 
 from .requestHandler import RequestHandler
 from .invalidUsage import InvalidUsage
+from ..application.modelApplication import ModelApplication
+from ..models.profile import Profile
+from ..training.dataPreparation import DataPreparation
 
 
 app = Flask(__name__)
@@ -32,7 +35,7 @@ def testAPI():
     Will always be available, when server is running.
     """
     if app.config['CAPTCHAKEY'] == "":
-        captcha = False
+        captcha = Falseg
     else:
         captcha = True
     if (
@@ -89,6 +92,69 @@ def parse_request():
     # get personality
     returnDict = requestHandler.get_personality(username=userName)
 
+    return returnDict
+
+@app.route('/hello')
+def hello():
+    return 'Hello, World'
+
+@app.route('/slack')
+def slack_parse_request():
+    """
+    Accept user name and return personality profile.
+    """
+    # initialize requestHandler
+    requestHandler = RequestHandler(
+        config=app.config
+    )
+    dataPre = DataPreparation()
+    textString = dataPre.clean_text(
+        textString='Der Bundestag hat die Pflicht der Abgeordneten zur Anwesenheit im Parlament gelockert.'
+    )
+    profile = Profile(
+            userID='1',
+            text=textString
+        )
+    # get personality
+    returnDict = requestHandler.get_slack_personality(profile=profile)
+    
+    return returnDict
+
+@app.route('/slackpost', methods=['Post'])
+def slackpost_parse_request():
+    """
+    Accept user name and return personality profile.
+    """
+    if request is None:
+        raise InvalidUsage('No data provided', status_code=400)
+
+    # read incoming data as json
+    data = request.get_json()
+
+    if data is None:
+        raise InvalidUsage('No data provided', status_code=400)
+    
+    if 'slackMessage' in data:
+        handleData = data['slackMessage']
+    else:
+            # key does not exist, invalid request
+            raise InvalidUsage('No slack message provided', status_code=400)
+    # initialize requestHandler
+    requestHandler = RequestHandler(
+        config=app.config
+    )
+    dataPre = DataPreparation()
+    textString = dataPre.clean_text(
+        textString=handleData
+    )
+    print(textString)
+    profile = Profile(
+            userID='1',
+            text=textString
+        )
+    # get personality
+    returnDict = requestHandler.get_slack_personality(profile=profile)
+    
     return returnDict
 
 

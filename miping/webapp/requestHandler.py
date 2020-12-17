@@ -94,10 +94,10 @@ class RequestHandler:
         # initialize modelApplication class
         self.modelApplication = ModelApplication(
             twitter_consumer_key=(
-                self.config['twitter_consumer_key']
+                #self.config['twitter_consumer_key']
             ),
             twitter_consumer_secret=(
-                self.config['twitter_consumer_secret']
+                #self.config['twitter_consumer_secret']
             ),
             glove_file_path=glove_file_path,
             dataBaseMode=self.config['glove_database_mode'],
@@ -224,6 +224,35 @@ class RequestHandler:
         # initialize return dict
         personalityDict = {
             'userName': username
+        }
+        # build personalityDict for this user
+        for dimension in resultDict.keys():
+            # take first (and only) value in each
+            # dimension's resultList
+            resultList = resultDict[dimension]
+            personalityDict[dimension] = float(resultList[0])
+
+        # get coverage statistics (first entry)
+        coverage = resultDict['coverage'][0]
+        personalityDict['coverage'] = coverage
+        # word count, also first entry
+        coverage = resultDict['wordCount'][0]
+        personalityDict['wordCount'] = coverage
+
+        return personalityDict
+    
+    def get_slack_personality(
+        self,
+        profile,
+    ):
+        try:
+            resultDict = self.modelApplication.get_personality([profile])
+        except NotASuitableUserError as e:
+            # reraise exception, so it gets to user
+            raise InvalidUsage(str(e), status_code=400)
+        
+        # initialize return dict
+        personalityDict = {
         }
         # build personalityDict for this user
         for dimension in resultDict.keys():

@@ -97,10 +97,11 @@ class ModelApplication:
         """
 
         # initialize twitter api
-        self.get_twitter(
-            twitter_consumer_key,
-            twitter_consumer_secret
-        )
+        if twitter_consumer_key and twitter_consumer_secret:
+            self.get_twitter(
+                twitter_consumer_key,
+                twitter_consumer_secret
+            )
 
         # initialize glove_pipeline
         self.get_glove_pipeline(
