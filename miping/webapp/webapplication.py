@@ -35,7 +35,7 @@ def testAPI():
     Will always be available, when server is running.
     """
     if app.config['CAPTCHAKEY'] == "":
-        captcha = Falseg
+        captcha = False
     else:
         captcha = True
     if (
@@ -98,32 +98,11 @@ def parse_request():
 def hello():
     return 'Hello, World'
 
-@app.route('/slack')
-def slack_parse_request():
-    """
-    Accept user name and return personality profile.
-    """
-    # initialize requestHandler
-    requestHandler = RequestHandler(
-        config=app.config
-    )
-    dataPre = DataPreparation()
-    textString = dataPre.clean_text(
-        textString='Der Bundestag hat die Pflicht der Abgeordneten zur Anwesenheit im Parlament gelockert.'
-    )
-    profile = Profile(
-            userID='1',
-            text=textString
-        )
-    # get personality
-    returnDict = requestHandler.get_slack_personality(profile=profile)
-    
-    return returnDict
 
 @app.route('/slackpost', methods=['Post'])
 def slackpost_parse_request():
     """
-    Accept user name and return personality profile.
+    Accept any text and return personality profile.
     """
     if request is None:
         raise InvalidUsage('No data provided', status_code=400)
