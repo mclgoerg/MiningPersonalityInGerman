@@ -94,10 +94,10 @@ class RequestHandler:
         # initialize modelApplication class
         self.modelApplication = ModelApplication(
             twitter_consumer_key=(
-                #self.config['twitter_consumer_key']
+                self.config['twitter_consumer_key']
             ),
             twitter_consumer_secret=(
-                #self.config['twitter_consumer_secret']
+                self.config['twitter_consumer_secret']
             ),
             glove_file_path=glove_file_path,
             dataBaseMode=self.config['glove_database_mode'],
